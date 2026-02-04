@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZYR Minecraft服务器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        :root {
+            --primary: #00a8ff;
+            --secondary: #9c88ff;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --accent: #fbc531;
+            --minecraft-green: #55aa55;
+            --minecraft-dark: #2d2d2d;
+            --bilibili-color: #fb7299;
+            --github-color: #333;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(0, 168, 255, 0.5);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .logo-text h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(0, 168, 255, 0.3);
+        }
+        
+        .logo-text p {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .language-switcher {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .nav-btn, .lang-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--light);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .nav-btn:hover, .lang-btn:hover, .lang-btn.active {
+            background: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 168, 255, 0.4);
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 60px 0;
+            position: relative;
+        }
+        
+        .hero h2 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--primary), var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(0, 168, 255, 0.5);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+            color: #ddd;
+        }
+        
+        .server-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 25px;
+            border-radius: 30px;
+            border: 2px solid var(--minecraft-green);
+            margin-top: 20px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #2ecc71;
+            animation: status-pulse 2s infinite;
+        }
+        
+        @keyframes status-pulse {
+            0%, 100% { box-shadow: 0 0 5px #2ecc71; }
+            50% { box-shadow: 0 0 15px #2ecc71; }
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 168, 255, 0.3);
+        }
+        
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card h3 i {
+            color: var(--primary);
+        }
+        
+        .card p {
+            line-height: 1.6;
+            color: #ccc;
+        }
+        
+        .notice {
+            background: rgba(241, 196, 15, 0.1);
+            border-left: 5px solid var(--accent);
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin: 30px 0;
+        }
+        
+        .notice h4 {
+            color: var(--accent);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin: 60px 0 40px;
+        }
+        
+        .social-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px 40px;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+            font-size: 1.2rem;
+            min-width: 220px;
+            justify-content: center;
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .social-btn.bilibili { 
+            background: linear-gradient(45deg, var(--bilibili-color), #ff2d51);
+            box-shadow: 0 5px 20px rgba(251, 114, 153, 0.3);
+        }
+        
+        .social-btn.github { 
+            background: linear-gradient(45deg, var(--github-color), #6e5494);
+            box-shadow: 0 5px 20px rgba(51, 51, 51, 0.3);
+        }
+        
+        .social-btn.tutorial { 
+            background: linear-gradient(45deg, var(--success), #27ae60);
+            box-shadow: 0 5px 20px rgba(46, 204, 113, 0.3);
+        }
+        
+        .social-btn i {
+            font-size: 1.8rem;
+        }
+        
+        .disclaimer {
+            background: rgba(52, 152, 219, 0.1);
+            border-left: 5px solid var(--primary);
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin: 30px 0;
+        }
+        
+        .disclaimer h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .disclaimer p {
+            line-height: 1.6;
+            color: #ccc;
+        }
+        
+        .auth-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .auth-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .auth-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .auth-card i {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        
+        .auth-card.offline i { color: #3498db; }
+        .auth-card.premium i { color: #f1c40f; }
+        .auth-card.external i { color: #9b59b6; }
+        
+        .auth-card h4 {
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        
+        .auth-card p {
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 40px;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .copyright {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .minecraft-block {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            opacity: 0.05;
+            z-index: -1;
+        }
+        
+        .block1 {
+            top: 10%;
+            left: 5%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%2355aa55"/><rect x="20" y="20" width="60" height="60" fill="%2344aa44"/></svg>');
+        }
+        
+        .block2 {
+            bottom: 10%;
+            right: 5%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23aa5555"/><rect x="20" y="20" width="60" height="60" fill="%23994444"/></svg>');
+        }
+        
+        .mobile-hint {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            background: rgba(241, 196, 15, 0.2);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .theme-switcher {
+            display: flex;
+            gap: 8px;
+            margin-left: 20px;
+        }
+        
+        .theme-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        
+        .theme-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .theme-btn.active {
+            background: var(--primary, #00a8ff);
+            box-shadow: 0 3px 10px rgba(0, 168, 255, 0.3);
+        }
+        
+        /* 动画类 */
+        .slide-in-left {
+            animation: slideInLeft 0.8s ease-out forwards;
+        }
+        
+        .slide-in-right {
+            animation: slideInRight 0.8s ease-out forwards;
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero h2 { font-size: 2.5rem; }
+            .content { grid-template-columns: 1fr; }
+            .mobile-hint { display: block; }
+            .social-links { gap: 30px; }
+            .social-btn { padding: 18px 30px; min-width: 200px; font-size: 1.1rem; }
+            .nav-buttons { flex-direction: column; align-items: flex-end; }
+            .theme-switcher { margin-left: 0; margin-top: 10px; }
+        }
+        
+        @media (max-width: 600px) {
+            .social-links { flex-direction: column; align-items: center; }
+            .social-btn { width: 100%; max-width: 300px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <div class="minecraft-block block1"></div>
+    <div class="minecraft-block block2"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-cube"></i>
+                <div class="logo-text">
+                    <h1>ZYR Minecraft</h1>
+                    <p>Java Edition Server</p>
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <div class="theme-switcher">
+                    <button class="theme-btn active" data-theme="default">默认</button>
+                    <button class="theme-btn" data-theme="dark">暗黑</button>
+                    <button class="theme-btn" data-theme="minecraft">Minecraft</button>
+                </div>
+                
+                <div class="language-switcher">
+                    <button class="lang-btn active" data-lang="zh">中文</button>
+                    <button class="lang-btn" data-lang="en">English</button>
+                </div>
+            </div>
+        </header>
+        
+        <section class="hero">
+            <h2 id="hero-title">欢迎来到ZYR我的世界</h2>
+            <p id="hero-desc">一个融合了冒险、创造与友谊的Minecraft服务器。我们提供独特的游戏模式、稳定的连接和友好的社区环境，让每一位玩家都能找到属于自己的乐趣。</p>
+            
+            <div class="server-status">
+                <div class="status-indicator" id="status-indicator"></div>
+                <span id="status-text">服务器状态: 在线 (寒暑假7×24小时)</span>
+            </div>
+            
+            <div class="mobile-hint">
+                <i class="fas fa-mobile-alt"></i> 在移动设备上查看效果更佳，可横屏体验
+            </div>
+        </section>
+        
+        <section class="content">
+            <div class="card">
+                <h3><i class="fas fa-gamepad"></i> <span id="feature1-title">独特游戏模式</span></h3>
+                <p id="feature1-desc">我们提供了多种自定义游戏模式，包括生存增强、创造建筑、冒险地图和迷你游戏，满足不同玩家的需求。定期更新玩法和活动，保持游戏新鲜感。</p>
+            </div>
+            
+            <div class="card">
+                <h3><i class="fas fa-users"></i> <span id="feature2-title">友好社区</span></h3>
+                <p id="feature2-desc">我们拥有活跃而友好的玩家社区，定期举办建筑比赛、PVP赛事和社区活动。管理员团队随时在线，确保游戏环境公平和谐。</p>
+            </div>
+            
+            <div class="card">
+                <h3><i class="fas fa-server"></i> <span id="feature3-title">稳定性能</span></h3>
+                <p id="feature3-desc">服务器采用高性能硬件，保证低延迟和99.9%的在线率。支持模组和插件，定期备份数据，确保您的建筑和进度安全无忧。</p>
+            </div>
+        </section>
+        
+        <div class="disclaimer">
+            <h4><i class="fas fa-info-circle"></i> <span id="disclaimer-title">重要声明</span></h4>
+            <p id="disclaimer-desc">本网站仅用于介绍个人Minecraft服务器，与Mojang Studios、Microsoft或Minecraft官方无关。本服务器为个人非商业用途，所有Minecraft相关内容版权归其各自所有者所有。</p>
+        </div>
+        
+        <div class="notice">
+            <h4><i class="fas fa-exclamation-circle"></i> <span id="notice-title">重要通知</span></h4>
+            <p id="notice-desc">寒暑假期间服务器7×24小时开放，工作日可能因维护暂时无法连接，请谅解！最新动态请关注我们的社交平台。</p>
+        </div>
+        
+        <div class="content">
+            <h3 style="text-align: center; margin-bottom: 20px; color: var(--accent);">支持的账号类型</h3>
+            <div class="auth-types">
+                <div class="auth-card offline">
+                    <i class="fas fa-user"></i>
+                    <h4>离线模式</h4>
+                    <p>无需正版验证，可直接使用任意用户名连接服务器，适合所有玩家快速加入。</p>
+                </div>
+                <div class="auth-card premium">
+                    <i class="fas fa-crown"></i>
+                    <h4>正版账号</h4>
+                    <p>支持Minecraft正版账号登录，享受完整的正版玩家体验和皮肤显示。</p>
+                </div>
+                <div class="auth-card external">
+                    <i class="fas fa-key"></i>
+                    <h4>外部验证</h4>
+                    <p>支持多种外部验证系统，如AuthMe、LittleSkin等第三方账号系统。</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="social-links">
+            <a href="https://space.bilibili.com/3546389952858197" target="_blank" class="social-btn bilibili">
+                <i class="fab fa-bilibili"></i>
+                <span>哔哩哔哩</span>
+            </a>
+            <a href="https://github.com" target="_blank" class="social-btn github">
+                <i class="fab fa-github"></i>
+                <span>GitHub</span>
+            </a>
+            <a href="#" id="tutorial-btn" class="social-btn tutorial">
+                <i class="fas fa-book"></i>
+                <span>连接教程</span>
+            </a>
+        </div>
+        
+        <footer>
+            <p id="footer-text">加入我们的我的世界，开启你的冒险之旅！服务器IP和最新资讯请关注社交平台更新。</p>
+            <div class="copyright">
+                <span id="copyright-text">版权所有 © Baldi</span>
+                <span>•</span>
+                <span id="contact-text">联系: 3369220892@qq.com (无事请不要发骚扰邮件)</span>
+                <span>•</span>
+                <span>托管于GitHub</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // 动态粒子系统
+        class ParticleSystem {
+            constructor(containerId, particleCount = 50) {
+                this.container = document.getElementById(containerId);
+                this.particleCount = particleCount;
+                this.particles = [];
+                this.colors = ['#00a8ff', '#9c88ff', '#fbc531', '#55aa55', '#ff6b6b'];
+                this.init();
+            }
+
+            init() {
+                if (!this.container) return;
+                
+                // 创建粒子容器
+                this.container.innerHTML = '';
+                
+                for (let i = 0; i < this.particleCount; i++) {
+                    this.createParticle(i);
+                }
+                
+                // 添加鼠标交互
+                this.addMouseInteraction();
+            }
+
+            createParticle(index) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // 随机属性
+                const size = Math.random() * 5 + 2;
+                const color = this.colors[Math.floor(Math.random() * this.colors.length)];
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.backgroundColor = color;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.opacity = Math.random() * 0.7 + 0.3;
+                
+                // 随机动画
+                const duration = Math.random() * 20 + 15;
+                const delay = Math.random() * 20;
+                
+                particle.style.animation = `float ${duration}s infinite linear ${delay}s`;
+                
+                this.container.appendChild(particle);
+                this.particles.push({
+                    element: particle,
+                    x: parseFloat(particle.style.left),
+                    y: parseFloat(particle.style.top),
+                    speedX: (Math.random() - 0.5) * 0.5,
+                    speedY: (Math.random() - 0.5) * 0.5
+                });
+            }
+
+            addMouseInteraction() {
+                document.addEventListener('mousemove', (e) => {
+                    const mouseX = e.clientX / window.innerWidth;
+                    const mouseY = e.clientY / window.innerHeight;
+                    
+                    this.particles.forEach(particle => {
+                        const dx = particle.x - mouseX * 100;
+                        const dy = particle.y - mouseY * 100;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < 20) {
+                            particle.element.style.transform = `translate(${-dx * 0.5}%, ${-dy * 0.5}%) scale(1.5)`;
+                            particle.element.style.opacity = 1;
+                        } else {
+                            particle.element.style.transform = '';
+                            particle.element.style.opacity = particle.element.style.opacity;
+                        }
+                    });
+                });
+            }
+        }
+
+        // 滚动动画控制器
+        class ScrollAnimator {
+            constructor() {
+                this.animatedElements = [];
+                this.init();
+            }
+
+            init() {
+                // 获取需要动画的元素
+                this.animatedElements = document.querySelectorAll('.card, .social-btn, .notice, .disclaimer, .auth-card');
+                
+                // 初始检查
+                this.checkVisibility();
+                
+                // 滚动监听
+                window.addEventListener('scroll', () => this.checkVisibility());
+                window.addEventListener('resize', () => this.checkVisibility());
+            }
+
+            checkVisibility() {
+                this.animatedElements.forEach(element => {
+                    const rect = element.getBoundingClientRect();
+                    const isVisible = (
+                        rect.top <= (window.innerHeight * 0.85) &&
+                        rect.bottom >= (window.innerHeight * 0.15)
+                    );
+
+                    if (isVisible && !element.classList.contains('animated')) {
+                        this.animateElement(element);
+                        element.classList.add('animated');
+                    }
+                });
+            }
+
+            animateElement(element) {
+                // 移除可能的旧动画类
+                element.classList.remove('slide-in-left', 'slide-in-right', 'fade-in-up');
+                
+                // 根据元素类型添加不同的动画
+                if (element.classList.contains('card')) {
+                    const cards = Array.from(document.querySelectorAll('.card'));
+                    const index = cards.indexOf(element);
+                    
+                    setTimeout(() => {
+                        if (index % 2 === 0) {
+                            element.classList.add('slide-in-left');
+                        } else {
+                            element.classList.add('slide-in-right');
+                        }
+                    }, index * 100);
+                } else if (element.classList.contains('social-btn')) {
+                    setTimeout(() => {
+                        element.classList.add('fade-in-up');
+                    }, 200);
+                } else if (element.classList.contains('auth-card')) {
+                    const authCards = Array.from(document.querySelectorAll('.auth-card'));
+                    const index = authCards.indexOf(element);
+                    setTimeout(() => {
+                        element.classList.add('fade-in-up');
+                    }, index * 100);
+                } else {
+                    element.classList.add('fade-in-up');
+                }
+            }
+        }
+
+        // 服务器状态模拟器
+        class ServerStatusSimulator {
+            constructor(statusElementId, indicatorElementId) {
+                this.statusElement = document.getElementById(statusElementId);
+                this.indicatorElement = document.getElementById(indicatorElementId);
+                this.statuses = {
+                    online: { text: '服务器状态: 在线 (寒暑假7×24小时)', color: '#2ecc71' },
+                    maintenance: { text: '服务器状态: 维护中 (预计1小时后恢复)', color: '#f39c12' },
+                    offline: { text: '服务器状态: 离线 (工作日可能暂时无法连接)', color: '#e74c3c' }
+                };
+                this.currentStatus = 'online';
+                this.init();
+            }
+
+            init() {
+                // 模拟服务器状态变化（仅用于演示）
+                this.simulateStatusChanges();
+                
+                // 点击状态指示器可以切换状态（仅用于演示）
+                if (this.indicatorElement) {
+                    this.indicatorElement.addEventListener('click', () => this.toggleStatus());
+                }
+            }
+
+            toggleStatus() {
+                const statusKeys = Object.keys(this.statuses);
+                const currentIndex = statusKeys.indexOf(this.currentStatus);
+                const nextIndex = (currentIndex + 1) % statusKeys.length;
+                this.currentStatus = statusKeys[nextIndex];
+                this.updateStatus();
+            }
+
+            updateStatus() {
+                const status = this.statuses[this.currentStatus];
+                
+                if (this.statusElement) {
+                    this.statusElement.textContent = status.text;
+                }
+                
+                if (this.indicatorElement) {
+                    this.indicatorElement.style.backgroundColor = status.color;
+                    
+                    // 添加脉冲效果
+                    this.indicatorElement.style.animation = 'none';
+                    setTimeout(() => {
+                        this.indicatorElement.style.animation = 'status-pulse 2s infinite';
+                    }, 10);
+                }
+            }
+
+            simulateStatusChanges() {
+                // 每30秒随机切换一次状态（仅用于演示）
+                setInterval(() => {
+                    if (Math.random() < 0.3) { // 30%几率切换状态
+                        this.toggleStatus();
+                    }
+                }, 30000);
+            }
+        }
+
+        // 主题切换器
+        class ThemeSwitcher {
+            constructor() {
+                this.themes = {
+                    default: {
+                        primary: '#00a8ff',
+                        secondary: '#9c88ff',
+                        accent: '#fbc531',
+                        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+                    },
+                    dark: {
+                        primary: '#3498db',
+                        secondary: '#8e44ad',
+                        accent: '#f1c40f',
+                        background: 'linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #2c2c2c 100%)'
+                    },
+                    minecraft: {
+                        primary: '#55aa55',
+                        secondary: '#aa5555',
+                        accent: '#ffaa00',
+                        background: 'linear-gradient(135deg, #3a3a3a 0%, #2d2d2d 50%, #1f1f1f 100%)'
+                    }
+                };
+                this.currentTheme = 'default';
+                this.init();
+            }
+
+            init() {
+                // 绑定点击事件
+                document.querySelectorAll('.theme-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const theme = e.target.getAttribute('data-theme');
+                        this.switchTheme(theme);
+                        
+                        // 更新按钮状态
+                        document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                    });
+                });
+            }
+
+            switchTheme(themeName) {
+                this.currentTheme = themeName;
+                const theme = this.themes[themeName];
+                
+                // 更新CSS变量
+                document.documentElement.style.setProperty('--primary', theme.primary);
+                document.documentElement.style.setProperty('--secondary', theme.secondary);
+                document.documentElement.style.setProperty('--accent', theme.accent);
+                document.body.style.background = theme.background;
+            }
+        }
+
+        // 多语言内容
+        const translations = {
+            zh: {
+                heroTitle: "欢迎来到ZYR的我的世界服务器",
+                heroDesc: "一个融合了冒险、创造与友谊的Minecraft服务器。我们提供独特的游戏模式、稳定的连接和友好的社区环境，让每一位玩家都能找到属于自己的乐趣。",
+                statusText: "服务器状态: 在线 (寒暑假7×24小时)",
+                feature1Title: "独特游戏模式",
+                feature1Desc: "我们提供了多种自定义游戏模式，包括生存增强、创造建筑、冒险地图和迷你游戏，满足不同玩家的需求。定期更新玩法和活动，保持游戏新鲜感。",
+                feature2Title: "友好社区",
+                feature2Desc: "我们拥有活跃而友好的玩家社区，定期举办建筑比赛、PVP赛事和社区活动。管理员团队随时在线，确保游戏环境公平和谐。",
+                feature3Title: "稳定性能",
+                feature3Desc: "服务器采用高性能硬件，保证低延迟和99.9%的在线率。支持模组和插件，定期备份数据，确保您的建筑和进度安全无忧。",
+                disclaimerTitle: "重要声明",
+                disclaimerDesc: "本网站仅用于介绍个人Minecraft服务器，与Mojang Studios、Microsoft或Minecraft官方无关。本服务器为个人非商业用途，所有Minecraft相关内容版权归其各自所有者所有。",
+                noticeTitle: "重要通知",
+                noticeDesc: "寒暑假期间服务器7×24小时开放，工作日可能因维护暂时无法连接，请谅解！最新动态请关注我们的社交平台。",
+                footerText: "加入我们的我的世界，开启你的冒险之旅！服务器IP和最新资讯请关注社交平台更新。",
+                copyrightText: "版权所有 © Baldi",
+                contactText: "联系: 3369220892@qq.com (无事请不要发骚扰邮件)"
+            },
+            en: {
+                heroTitle: "Welcome to ZYR Minecraft",
+                heroDesc: "A Minecraft server that blends adventure, creativity, and friendship. We offer unique game modes, stable connections, and a friendly community environment where every player can find their own fun.",
+                statusText: "Server Status: Online (24/7 during holidays)",
+                feature1Title: "Unique Game Modes",
+                feature1Desc: "We provide various custom game modes including enhanced survival, creative building, adventure maps, and minigames to meet different players' needs. Regular updates and events keep the gameplay fresh.",
+                feature2Title: "Friendly Community",
+                feature2Desc: "We have an active and friendly player community, regularly hosting building competitions, PVP events, and community activities. Admin team is always online to ensure a fair and harmonious gaming environment.",
+                feature3Title: "Stable Performance",
+                feature3Desc: "The server uses high-performance hardware to ensure low latency and 99.9% uptime. Supports mods and plugins with regular data backups to keep your builds and progress safe.",
+                disclaimerTitle: "Important Disclaimer",
+                disclaimerDesc: "This website is only for introducing personal Minecraft server, not affiliated with Mojang Studios, Microsoft or Minecraft official. This server is for personal non-commercial use, all Minecraft related content copyright belongs to their respective owners.",
+                noticeTitle: "Important Notice",
+                noticeDesc: "Server is open 24/7 during winter and summer holidays. It may be temporarily unavailable on weekdays for maintenance, please understand! Follow our social platforms for the latest updates.",
+                footerText: "Join our Minecraft world and start your adventure! For server IP and latest news, follow our social platforms.",
+                copyrightText: "Copyright © Baldi",
+                contactText: "Contact: 3369220892@qq.com (Please don't send spam)"
+            }
+        };
+        
+        // 语言切换功能
+        function switchLanguage(lang) {
+            // 更新按钮状态
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // 更新所有文本内容
+            const trans = translations[lang];
+            document.getElementById('hero-title').textContent = trans.heroTitle;
+            document.getElementById('hero-desc').textContent = trans.heroDesc;
+            document.getElementById('status-text').textContent = trans.statusText;
+            document.getElementById('feature1-title').textContent = trans.feature1Title;
+            document.getElementById('feature1-desc').textContent = trans.feature1Desc;
+            document.getElementById('feature2-title').textContent = trans.feature2Title;
+            document.getElementById('feature2-desc').textContent = trans.feature2Desc;
+            document.getElementById('feature3-title').textContent = trans.feature3Title;
+            document.getElementById('feature3-desc').textContent = trans.feature3Desc;
+            document.getElementById('disclaimer-title').textContent = trans.disclaimerTitle;
+            document.getElementById('disclaimer-desc').textContent = trans.disclaimerDesc;
+            document.getElementById('notice-title').textContent = trans.noticeTitle;
+            document.getElementById('notice-desc').textContent = trans.noticeDesc;
+            document.getElementById('footer-text').textContent = trans.footerText;
+            document.getElementById('copyright-text').textContent = trans.copyrightText;
+            document.getElementById('contact-text').textContent = trans.contactText;
+        }
+        
+        // 教程页面模拟
+        function showTutorial() {
+            const tutorialHTML = `
+                <div class="tutorial-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; justify-content: center; align-items: center;">
+                    <div style="background: rgba(30, 30, 46, 0.9); border-radius: 15px; padding: 30px; max-width: 800px; width: 90%; max-height: 80vh; overflow-y: auto; border: 2px solid var(--primary);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 style="color: var(--accent);"><i class="fas fa-book"></i> 服务器连接教程</h3>
+                            <button id="close-tutorial" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
+                        </div>
+                        <div style="color: #ccc; line-height: 1.6;">
+                            <h4 style="color: var(--primary); margin-top: 15px;"><i class="fas fa-plug"></i> 连接步骤：</h4>
+                            <ol style="margin-left: 20px;">
+                                <li>启动Minecraft Java Edition客户端</li>
+                                <li>点击"多人游戏"</li>
+                                <li>点击"添加服务器"</li>
+                                <li>在服务器地址输入：<code style="background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 5px;">mc.zyr-server.com</code></li>
+                                <li>点击"完成"保存服务器</li>
+                                <li>双击服务器名称开始连接</li>
+                            </ol>
+                            
+                            <h4 style="color: var(--primary); margin-top: 20px;"><i class="fas fa-info-circle"></i> 服务器信息：</h4>
+                            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin: 10px 0;">
+                                <p><strong>地址：</strong> mc.zyr-server.com</p>
+                                <p><strong>端口：</strong> 25565 (默认)</p>
+                                <p><strong>版本：</strong> 1.20.1</p>
+                                <p><strong>类型：</strong> Java Edition</p>
+                            </div>
+                            
+                            <h4 style="color: var(--primary); margin-top: 20px;"><i class="fas fa-exclamation-triangle"></i> 注意事项：</h4>
+                            <ul style="margin-left: 20px;">
+                                <li>支持离线/正版/外部账号登录</li>
+                                <li>寒暑假期间24小时开放</li>
+                                <li>工作日可能因维护暂时无法连接</li>
+                                <li>请遵守服务器规则，禁止使用作弊模组</li>
+                            </ul>
+                            
+                            <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                                <p style="color: #aaa; font-size: 0.9rem;">需要更多帮助？请关注我们的B站或GitHub获取最新信息</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const tutorialElement = document.createElement('div');
+            tutorialElement.innerHTML = tutorialHTML;
+            document.body.appendChild(tutorialElement);
+            
+            // 添加关闭功能
+            tutorialElement.querySelector('#close-tutorial').addEventListener('click', () => {
+                document.body.removeChild(tutorialElement);
+            });
+            
+            // 点击背景关闭
+            tutorialElement.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tutorial-modal')) {
+                    document.body.removeChild(tutorialElement);
+                }
+            });
+        }
+        
+        // 初始化所有功能
+        function initMinecraftEffects() {
+            console.log('初始化Minecraft特效...');
+            
+            // 初始化粒子系统
+            const particleSystem = new ParticleSystem('particles', 60);
+            
+            // 初始化滚动动画
+            const scrollAnimator = new ScrollAnimator();
+            
+            // 初始化服务器状态模拟器
+            const serverStatus = new ServerStatusSimulator('status-text', 'status-indicator');
+            
+            // 初始化主题切换器
+            const themeSwitcher = new ThemeSwitcher();
+            
+            // 教程按钮点击事件
+            document.getElementById('tutorial-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                showTutorial();
+            });
+            
+            // 添加卡片悬停效果增强
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    const cards = document.querySelectorAll('.card');
+                    cards.forEach(c => {
+                        if (c !== this) {
+                            c.style.opacity = '0.7';
+                            c.style.transform = 'scale(0.98)';
+                        }
+                    });
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    const cards = document.querySelectorAll('.card');
+                    cards.forEach(c => {
+                        c.style.opacity = '1';
+                        c.style.transform = '';
+                    });
+                });
+            });
+            
+            // 社交按钮悬停效果
+            document.querySelectorAll('.social-btn').forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.05)';
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = '';
+                });
+            });
+            
+            // 设置语言切换事件
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    switchLanguage(lang);
+                    
+                    // 添加点击效果
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+            
+            // 添加键盘快捷键
+            document.addEventListener('keydown', (e) => {
+                // Ctrl+1: 切换默认主题
+                if (e.ctrlKey && e.key === '1') {
+                    themeSwitcher.switchTheme('default');
+                    document.querySelector('.theme-btn[data-theme="default"]').click();
+                }
+                // Ctrl+2: 切换暗黑主题
+                if (e.ctrlKey && e.key === '2') {
+                    themeSwitcher.switchTheme('dark');
+                    document.querySelector('.theme-btn[data-theme="dark"]').click();
+                }
+                // Ctrl+3: 切换Minecraft主题
+                if (e.ctrlKey && e.key === '3') {
+                    themeSwitcher.switchTheme('minecraft');
+                    document.querySelector('.theme-btn[data-theme="minecraft"]').click();
+                }
+                // Ctrl+T: 显示教程
+                if (e.ctrlKey && e.key === 't') {
+                    e.preventDefault();
+                    showTutorial();
+                }
+                // Esc: 关闭教程
+                if (e.key === 'Escape') {
+                    const tutorial = document.querySelector('.tutorial-modal');
+                    if (tutorial) {
+                        document.body.removeChild(tutorial);
+                    }
+                }
+            });
+            
+            // 初始化语言为中文
+            switchLanguage('zh');
+            
+            console.log('Minecraft特效初始化完成！');
+        }
+        
+        // 当DOM加载完成后初始化
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMinecraftEffects);
+        } else {
+            initMinecraftEffects();
+        }
+    </script>
+</body>
+</html>
