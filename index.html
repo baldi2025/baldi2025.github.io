@@ -599,7 +599,7 @@
                 <div class="auth-card external">
                     <i class="fas fa-key"></i>
                     <h4>外部验证</h4>
-                    <p>支持多种外部验证系统，如AuthMe、LittleSkin等第三方账号系统。</p>
+                    <p>支持外部验证系统，LittleSkin第三方账号系统。外部验证使用LittleSkin。</p>
                 </div>
             </div>
         </div>
@@ -775,67 +775,7 @@
             }
         }
 
-        // 服务器状态模拟器
-        class ServerStatusSimulator {
-            constructor(statusElementId, indicatorElementId) {
-                this.statusElement = document.getElementById(statusElementId);
-                this.indicatorElement = document.getElementById(indicatorElementId);
-                this.statuses = {
-                    online: { text: '服务器状态: 在线 (寒暑假7×24小时)', color: '#2ecc71' },
-                    maintenance: { text: '服务器状态: 维护中 (预计1小时后恢复)', color: '#f39c12' },
-                    offline: { text: '服务器状态: 离线 (工作日可能暂时无法连接)', color: '#e74c3c' }
-                };
-                this.currentStatus = 'online';
-                this.init();
-            }
-
-            init() {
-                // 模拟服务器状态变化（仅用于演示）
-                this.simulateStatusChanges();
-                
-                // 点击状态指示器可以切换状态（仅用于演示）
-                if (this.indicatorElement) {
-                    this.indicatorElement.addEventListener('click', () => this.toggleStatus());
-                }
-            }
-
-            toggleStatus() {
-                const statusKeys = Object.keys(this.statuses);
-                const currentIndex = statusKeys.indexOf(this.currentStatus);
-                const nextIndex = (currentIndex + 1) % statusKeys.length;
-                this.currentStatus = statusKeys[nextIndex];
-                this.updateStatus();
-            }
-
-            updateStatus() {
-                const status = this.statuses[this.currentStatus];
-                
-                if (this.statusElement) {
-                    this.statusElement.textContent = status.text;
-                }
-                
-                if (this.indicatorElement) {
-                    this.indicatorElement.style.backgroundColor = status.color;
-                    
-                    // 添加脉冲效果
-                    this.indicatorElement.style.animation = 'none';
-                    setTimeout(() => {
-                        this.indicatorElement.style.animation = 'status-pulse 2s infinite';
-                    }, 10);
-                }
-            }
-
-            simulateStatusChanges() {
-                // 每30秒随机切换一次状态（仅用于演示）
-                setInterval(() => {
-                    if (Math.random() < 0.3) { // 30%几率切换状态
-                        this.toggleStatus();
-                    }
-                }, 30000);
-            }
-        }
-
-        // 主题切换器
+// 主题切换器
         class ThemeSwitcher {
             constructor() {
                 this.themes = {
@@ -973,7 +913,7 @@
                                 <li>启动Minecraft Java Edition客户端</li>
                                 <li>点击"多人游戏"</li>
                                 <li>点击"添加服务器"</li>
-                                <li>在服务器地址输入：<code style="background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 5px;">mc.zyr-server.com</code></li>
+                                <li>在服务器地址输入：<code style="background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 5px;">8.148.212.1:14952</code></li>
                                 <li>点击"完成"保存服务器</li>
                                 <li>双击服务器名称开始连接</li>
                             </ol>
@@ -981,7 +921,7 @@
                             <h4 style="color: var(--primary); margin-top: 20px;"><i class="fas fa-info-circle"></i> 服务器信息：</h4>
                             <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin: 10px 0;">
                                 <p><strong>地址：</strong> mc.zyr-server.com</p>
-                                <p><strong>端口：</strong> 25565 (默认)</p>
+                                <p><strong>端口：</strong> 14952 (默认)</p>
                                 <p><strong>版本：</strong> 1.21.11</p>
                                 <p><strong>类型：</strong> Java Edition</p>
                             </div>
