@@ -586,20 +586,12 @@
         <div class="content">
             <h3 style="text-align: center; margin-bottom: 20px; color: var(--accent);">支持的账号类型</h3>
             <div class="auth-types">
-                <div class="auth-card offline">
-                    <i class="fas fa-user"></i>
-                    <h4>离线模式</h4>
-                    <p>无需正版验证，可直接使用任意用户名连接服务器，适合所有玩家快速加入。</p>
                 </div>
                 <div class="auth-card premium">
                     <i class="fas fa-crown"></i>
                     <h4>正版账号</h4>
                     <p>支持Minecraft正版账号登录，享受完整的正版玩家体验和皮肤显示。</p>
                 </div>
-                <div class="auth-card external">
-                    <i class="fas fa-key"></i>
-                    <h4>外部验证</h4>
-                    <p>支持多种外部验证系统，如AuthMe、LittleSkin等第三方账号系统。</p>
                 </div>
             </div>
         </div>
@@ -782,9 +774,7 @@
                 this.indicatorElement = document.getElementById(indicatorElementId);
                 this.statuses = {
                     online: { text: '服务器状态: 在线 (寒暑假7×24小时)', color: '#2ecc71' },
-                    maintenance: { text: '服务器状态: 维护中 (预计1小时后恢复)', color: '#f39c12' },
-                    offline: { text: '服务器状态: 离线 (工作日可能暂时无法连接)', color: '#e74c3c' }
-                };
+                    };
                 this.currentStatus = 'online';
                 this.init();
             }
@@ -988,7 +978,7 @@
                             
                             <h4 style="color: var(--primary); margin-top: 20px;"><i class="fas fa-exclamation-triangle"></i> 注意事项：</h4>
                             <ul style="margin-left: 20px;">
-                                <li>支持离线/正版/外部账号登录</li>
+                                <li>支持正版登陆</li>
                                 <li>寒暑假期间24小时开放</li>
                                 <li>工作日可能因维护暂时无法连接</li>
                                 <li>请遵守服务器规则，禁止使用作弊模组</li>
